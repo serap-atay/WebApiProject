@@ -15,12 +15,13 @@ namespace NLayer.Service.Services
     {
         private readonly IGenericRepository<T> _repository;
         private readonly IUnitOfWork _unitOfWork;
-
         public Service(IGenericRepository<T> repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
         }
+
+
 
         public async Task<T> AddAsync(T entity)
         {
@@ -31,39 +32,45 @@ namespace NLayer.Service.Services
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
         {
-           await _repository.AddRangeAsync(entities);
-           await _unitOfWork.CommitAsync();
+            await _repository.AddRangeAsync(entities);
+            await _unitOfWork.CommitAsync();
             return entities;
         }
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
         {
-           return  await _repository.AnyAsync(expression);
+            return await _repository.AnyAsync(expression);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _repository.GetAllAsync().ToListAsync();
+            return await _repository.GetAll().ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var hasProduct = await _repository.GetByIdAsync(id);
+
+            if (hasProduct == null)
+            {
+                throw new Exception($"{typeof(T).Name}({id}) not found");
+            }
+            return hasProduct;
         }
 
-        public async Task Remove(T entity)
+        public async Task RemoveAsync(T entity)
         {
-             _repository.Remove(entity);
+            _repository.Remove(entity);
             await _unitOfWork.CommitAsync();
         }
 
-        public  async Task RemoveRange(IEnumerable<T> entity)
+        public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
-            _repository.RemoveRange(entity);
+            _repository.RemoveRange(entities);
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _repository.Update(entity);
             await _unitOfWork.CommitAsync();
@@ -75,3 +82,4 @@ namespace NLayer.Service.Services
         }
     }
 }
+
