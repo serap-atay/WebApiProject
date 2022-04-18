@@ -14,7 +14,7 @@ namespace NLayer.Repository.Seeds
         public void Configure(EntityTypeBuilder<ProductFeature> builder)
         {
             builder.HasData(new ProductFeature() { Id = 1, Color = "Kırmızı", Height = 100, Width = 200, ProductId = 1 },
-                            new ProductFeature() { Id = 1, Color = "Kırmızı", Height = 100, Width = 200, ProductId = 1 },
+                            new ProductFeature() { Id = 2, Color = "Kırmızı", Height = 100, Width = 200, ProductId = 1 },
                             new ProductFeature() { Id = 3, Color = "Sarı", Height = 120, Width = 200, ProductId = 3 }
             );
         }
