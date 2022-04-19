@@ -2,6 +2,7 @@
 using NLayer.Core.Repositories;
 using NLayer.Core.Services;
 using NLayer.Core.UnitOfWorks;
+using NLayer.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace NLayer.Service.Services
 
             if (hasProduct == null)
             {
-                throw new Exception($"{typeof(T).Name}({id}) not found");
+                throw new NotFoundException($"{typeof(T).Name}({id}) not found");
             }
             return hasProduct;
         }
