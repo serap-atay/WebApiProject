@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace NLayer.Caching
 {
-    public class ProductSeviceWithCaching : IProductService
+    public class ProductServiceWithCaching : IProductService
     {
         private const string CacheKey = "ProductsCache";
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace NLayer.Caching
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
 
-        public ProductSeviceWithCaching(IProductRepository productRepository, IMemoryCache memoryCache, IMapper mapper, IUnitOfWork unitOfWork)
+        public ProductServiceWithCaching(IProductRepository productRepository, IMemoryCache memoryCache, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _memoryCache = memoryCache;
@@ -32,7 +32,7 @@ namespace NLayer.Caching
 
             if (_memoryCache.TryGetValue(CacheKey, out _))
             {
-                _memoryCache.Set(CacheKey, _productRepository.GetProductWithCategory());
+                _memoryCache.Set(CacheKey, _productRepository.GetProductWithCategory().Result);
             }
             _unitOfWork = unitOfWork;
         }
@@ -73,11 +73,11 @@ namespace NLayer.Caching
             return Task.FromResult(product);
         }
 
-        public Task<CustomResponseDto<List<ProductWithCategoryDto>>> GetProductWithCategory()
+        public Task<List<ProductWithCategoryDto>> GetProductWithCategory()
         {
             var products = _memoryCache.Get<List<Product>>(CacheKey);
             var productWithCategoryDto = _mapper.Map<List<ProductWithCategoryDto>>(products);
-            return Task.FromResult(CustomResponseDto<List<ProductWithCategoryDto>>.Success(productWithCategoryDto , 200));
+            return Task.FromResult(productWithCategoryDto);
         
         }
 
